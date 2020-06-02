@@ -1,3 +1,3 @@
-cybercat .. esp32 and lib files
-s
+cybercat .. esp32 and lib filess
+
 sim .. opengl xcode simulation (macOS)
