@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "GLOBAL">
+         <PersistentStrings>
+            <PersistentString
+               value = "angle">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "LinkObject::getAngle():LinkObject.h">
+      </ContextState>
+      <ContextState
+         contextName = "Bone::updateConnected():Bone.h">
+      </ContextState>
+      <ContextState
+         contextName = "LinkObject::setAngle(unsigned int&amp;):LinkObject.h">
+         <PersistentStrings>
+            <PersistentString
+               value = "angle">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "LinkObject::setPositionAngle(Coord&amp;, unsigned int&amp;):LinkObject.h">
+      </ContextState>
+      <ContextState
+         contextName = "display():main.cpp">
+      </ContextState>
+      <ContextState
+         contextName = "main:main.cpp">
+      </ContextState>
+      <ContextState
+         contextName = "Coord::cacheTranslate(unsigned int, float):Coord.h">
+      </ContextState>
+      <ContextState
+         contextName = "LinkObject::setPosition(Coord&amp;):LinkObject.h">
+      </ContextState>
+      <ContextState
+         contextName = "CommandQueue::getHead():Command.h">
+      </ContextState>
+      <ContextState
+         contextName = "CommandQueue::CommandQueue(Command*, unsigned char):Command.h">
+         <PersistentStrings>
+            <PersistentString
+               value = "commands[3]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>
