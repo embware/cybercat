@@ -42,10 +42,26 @@ struct Coord
     float x;
     float y;
     
+    Coord() : Coord {0,0}
+    {
+        
+    }
+    Coord (float x, float y)
+    : x{x}, y{y}
+    {
+    }
+    
     Coord operator+(Coord c)
     {
         x += c.x;
         y += c.y;
+        return *this;
+    }
+    
+    Coord operator-(Coord c)
+    {
+        x -= c.x;
+        y -= c.y;
         return *this;
     }
     

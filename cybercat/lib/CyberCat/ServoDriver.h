@@ -113,6 +113,10 @@ struct ServoDriver
         queue.push(commands);
     }
     
+    inline bool idle()
+    {
+        return queue.empty();
+    }
   
 };
 

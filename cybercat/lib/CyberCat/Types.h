@@ -9,6 +9,8 @@
 #ifndef Types_h
 #define Types_h
 
+#include <math.h>
+
 #ifndef uint8
 typedef uint8_t uint8;
 #endif
@@ -19,11 +21,18 @@ typedef uint8_t uint8;
 
 const double PI = 3.141592653589793238463;
 
+// Instead of Arduino map function (this is more precise)
+inline static int map_prop (int x, int in_min, int in_max, int out_min, int out_max)
+{
+    double value = (x - in_min) * (out_max - out_min);
+    value = value / (in_max - in_min) + out_min; 
+    return round(value);
+}
+
 #ifdef CATSIM
 
 #include <thread>
 #define delay(time_ms) std::this_thread::sleep_for(std::chrono::milliseconds((time_ms)))
-
 
 
 std::mutex mutex{};
@@ -62,7 +71,7 @@ portMUX_TYPE mutex = portMUX_INITIALIZER_UNLOCKED;
 
 typedef int Degree; // [0,180] degrees
 
-typedef int Len; // [0,250] cm
+typedef int Len; // [0,250] mm? or cm
 
 typedef int ServoSpeed; // msec/60 degre
 

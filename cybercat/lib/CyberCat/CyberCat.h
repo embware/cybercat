@@ -12,6 +12,7 @@
 #include "Types.h"
 #include "Coord.h"
 #include "ServoDriver.h"
+#include "Model.h"
 
 const uint8 FLS = 0; // Shoulder Front Left
 const uint8 FRS = 1; // Shoulder Front Right
@@ -27,23 +28,23 @@ struct CyberCat
     ServoDriver& driver;
     Len boneLength = 80;
     Command* pCommand;
-    
+  
     CyberCat(ServoDriver& driver) : driver {driver}
     {
        
     }
     
-    static uint8 KA(uint8 angle,uint8 height, uint8 distance )
+    static uint8 KA(uint8 shoulderAngle,uint8 height, uint8 distance )
     {
-        return KA(angle,height/distance);
+        return KA(shoulderAngle,height/distance);
     }
     
-    static uint8 KA(uint8 angle,double hdRatio = sqrt(2))
+    static uint8 KA(uint8 shoulderAngle,double hdRatio = sqrt(2))
     {
         // formula:
         //  beta = 180 - angle + (double)asin(height/boneLenth - TrigCache.sinus[angle]) * 180 / TrigCache.PI;
         //  beta = 180 - angle + (double)asin(hd - TrigCache.sinus[angle]) * 180 / TrigCache.PI;
-        return 180 - angle + TrigCache.degree(sin(hdRatio - TrigCache.sinus[angle]));
+        return 180 - shoulderAngle + TrigCache.degree(sin(hdRatio - TrigCache.sinus[shoulderAngle]));
     }
     
     
@@ -62,6 +63,9 @@ struct CyberCat
             {Command::SYN},{Command::END}
         };
         
+        Command height[10];
+        
+        
         Command bounce[20]
         {
             {FLS,120},{FLK,60},{BLS,135},{BLK,KA(115)},
@@ -72,15 +76,6 @@ struct CyberCat
             {Command::SYN},{Command::END}
         };
 
-        Command bounce2[20]
-        {
-            {FLS,140},{FLK,80},{BLS,135},{BLK,KA(135)},
-            {FRS,135},{FRK,KA(135)},{BRS,140},{BRK,80},
-            {Command::SYN},
-            {FLS,135},{FLK,KA(135)},{BLS,140},{BLK,80},
-            {FRS,140},{FRK,80},{BRS,135},{BRK,KA(135)},
-            {Command::SYN},{Command::END}
-        };
         
         Command walk[21]
         {
@@ -201,19 +196,43 @@ struct CyberCat
         const Degree sa = 180 - angle;
         const Degree ka = 2 * angle;
         
-        if (pCommand != nullptr)
-        {
-           delete[] pCommand;
-        }
-        pCommand = new Command[10]
-        {
-            {FLS,sa},{BRS,sa},{FRS,sa},{BLS,sa},
-            {FLK,ka},{BRK,ka},{FRK,ka},{BLK,ka},
-            {Command::SYN},{Command::END}
-        };
-        driver.add(pCommand);
+        com.height[0] = {FLS,sa};
+        com.height[1] = {BRS,sa};
+        com.height[2] = {FRS,sa};
+        com.height[3] = {BLS,sa};
+        com.height[4] = {FLK,ka};
+        com.height[5] = {BRK,ka};
+        com.height[6] = {FRK,ka};
+        com.height[7] = {BLK,ka};
+        com.height[8] = {Command::SYN};
+        com.height[9] = {Command::END};
+        
+        driver.add(com.height);
     }
     
+    inline bool idle()
+    {
+        return driver.idle();
+    }
+    
+    Len heightFront()
+    {
+        Model model {driver.servoAngle[FLS],driver.servoAngle[FLK]};
+        return model.posFoot.y;
+    }
+    
+    Len heightBack()
+    {
+        Model model {driver.servoAngle[BRS],driver.servoAngle[BRK]};
+        return model.posFoot.y;
+    }
+    
+    
+    // TODO API Calls ..
+    
+    // Len heightFront();
+    
+    // Len heightBack();
    
 };
 

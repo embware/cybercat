@@ -62,6 +62,14 @@ struct CommandQueue
         UNLOCK;
         return pCommands;
     }
+    
+    inline bool empty()
+    {
+        LOCK;
+        bool queue_empty = head == tail;
+        UNLOCK;
+        return queue_empty;
+    }
    
     
 } commandQueue;

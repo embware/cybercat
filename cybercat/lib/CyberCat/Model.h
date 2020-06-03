@@ -14,19 +14,23 @@
 
 struct Model
 {
-    Degree angleKnee;
-    Degree angleShoulder;
-    Len boneLength;
     Coord posKnee;
     Coord posShoulder;
     Coord posFoot;
-    
+    Degree angleShoulder;
+    Degree angleKnee;
+    Len boneLength;
+  
 
-    Model(Coord posShoulder = {0,0}, Degree angleShoulder = 135, Degree angleKnee = 90, Len boneLentgth = 20)
+    Model(Coord posShoulder = {0,0}, Degree angleShoulder = 135, Degree angleKnee = 90, Len boneLentgth = 200)
     : posShoulder {posShoulder}, angleShoulder {angleShoulder}, angleKnee {angleKnee}, boneLength {boneLentgth}
     {
         update();
     }
+    
+    Model(Degree angleShoulder, Degree angleKnee)
+    : Model {{0,0}, angleShoulder, angleKnee, 80}
+    {}
     
     void update()
     {

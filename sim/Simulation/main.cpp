@@ -36,17 +36,21 @@ void vertex(Coord val)
 
 std::mutex mutex_angle;
 
-Len ground_dist = 405; // cm
 
-int width = 500, height = 500;
-Len bone_length = 80;
-Len cat_h = 80;
 
-Model backLeft {{150,200}, 0,0, bone_length};
-Model backRight {{150,200}, 0,0, bone_length};
+int width = 1024, height = 512;
+Len ground_dist =  height * 3/2; // mm
+Len bone_length = 200; // mm
+Len cat_h = 300;
 
-Model frontLeft {{350,200}, 0,0, bone_length};
-Model frontRight {{350,200}, 0,0, bone_length};
+Coord catpos {750,800};
+Len catwidth = 520;
+
+Model backLeft {{catpos.x,catpos.y}, 0,0, bone_length};
+Model backRight {{catpos.x,catpos.y}, 0,0, bone_length};
+
+Model frontLeft {{catpos.x + catwidth,catpos.y}, 0,0, bone_length};
+Model frontRight {{catpos.x + catwidth,catpos.y}, 0,0, bone_length};
 
 
 
@@ -71,18 +75,23 @@ void thread_update_angle (Degree* angle,Degree value, int delayTimePerDegree)
 struct GraphServoDriver : ServoDriver
 {
     std::thread thread[SERVO_NO];
+    int angle2pwm[SERVO_MAX_ANGLE+1];
     
     GraphServoDriver(Degree startAngle[SERVO_NO]) : ServoDriver(1000,startAngle)
     {
+        Degree pulseAngle;
+        for (pulseAngle = SERVO_MIN_ANGLE; pulseAngle <= SERVO_MAX_ANGLE; pulseAngle ++)
+        {
+            angle2pwm[pulseAngle] = map_prop(pulseAngle, SERVO_MIN_ANGLE, SERVO_MAX_ANGLE, MIN_PULSE_WIDTH, MAX_PULSE_WIDTH);
+        }
     }
-    
-    
     
     inline Milliseconds setServoAngle(uint8 servoIndex, Degree angle)
     {
         if (angle >= config[servoIndex].angleMin && angle<= config[servoIndex].angleMax)
         {
-           // first engage (write to) servo to minimize delay
+            LOG3("Servo:%d angle:%d pulse:%d",servoIndex,angle,angle2pwm[angle]);
+                       
             Milliseconds delayTime = abs((Milliseconds)(angle - servoAngle[servoIndex])) * servoSpeed/60;
             
             thread[servoIndex].swap(*new std::thread {thread_update_angle, &servoAngle[servoIndex], angle, servoSpeed/90});
@@ -101,12 +110,11 @@ struct GraphServoDriver : ServoDriver
         for (int id = 0; id < SERVO_NO; id++)
         {
             thread[id].join();
-        }
-    }
+        }    }
 };
 
 
-Degree startAngles[8] {150,150,150,150,60,60,60,60};
+Degree startAngles[8] {135,135,135,135,90,90,90,90};
 GraphServoDriver driver {startAngles};
 CyberCat cat {driver};
 
@@ -137,16 +145,22 @@ void idle()
     
     glutPostRedisplay();
 }
-
+Len cat_height = 10;
 void specialKey(int key, int x,int y)
 {
     switch(key)
     {
         case GLUT_KEY_UP:
-            cat.up();
+            if (cat.idle())
+            {
+               cat.height(cat.heightFront() + 10);
+            }
             break;
         case GLUT_KEY_DOWN:
-            cat.down();
+             if (cat.idle())
+             {
+                cat.height(cat.heightFront() - 10);
+             }
             break;
         case GLUT_KEY_LEFT:
             cat.walk();
@@ -163,7 +177,7 @@ void specialKey(int key, int x,int y)
             cat.dinamic(sqrt(2));
             break;
         case GLUT_KEY_F3:
-            cat.height(50);
+            cat.height(100);
            
         break;
     }
@@ -270,8 +284,13 @@ void drawFoot(Coord foot)
 
 void drawBody()
 {
+    Coord pad {10,0};
+    
     Coord start = backLeft.posShoulder;
     Coord end = frontLeft.posShoulder;
+    
+    start = start - pad;
+    end = end + pad;
     
     glBegin(GL_LINES);
     
@@ -280,28 +299,28 @@ void drawBody()
     glVertex2f(end.x, end.y);
     
     glVertex2f(end.x, end.y);
-    glVertex2f(end.x, end.y - 20);
+    glVertex2f(end.x, end.y - 60);
     
-    glVertex2f(end.x, end.y - 20);
-    glVertex2f(start.x, start.y - 20);
+    glVertex2f(end.x, end.y - 60);
+    glVertex2f(start.x, start.y - 60);
     
-    glVertex2f(start.x, start.y - 20);
+    glVertex2f(start.x, start.y - 60);
     glVertex2f(start.x, start.y);
     
     // head
     glColor3f(1, 1, 0);  //yellow
     
-    glVertex2f(end.x, end.y - 20);
-    glVertex2f(end.x, end.y - 50);
+    glVertex2f(end.x, end.y - 60);
+    glVertex2f(end.x, end.y - 90);
     
-    glVertex2f(end.x, end.y - 50);
-    glVertex2f(end.x - 30, end.y - 50);
+    glVertex2f(end.x, end.y - 90);
+    glVertex2f(end.x - 60, end.y - 90);
     
-    glVertex2f(end.x - 30, end.y - 50);
-    glVertex2f(end.x- 30, end.y - 20);
+    glVertex2f(end.x - 60, end.y - 90);
+    glVertex2f(end.x - 60, end.y - 60);
     
-    glVertex2f(end.x - 30, end.y - 20);
-    glVertex2f(end.x, end.y - 20);
+    glVertex2f(end.x - 60, end.y - 60);
+    glVertex2f(end.x, end.y - 60);
     
     glEnd();
     
@@ -340,19 +359,16 @@ void display()
     
     // center line
     glColor3f(.2, .2, .2);  //white
-    glVertex2f(width/2, height);
-    glVertex2f(width/2, 0);
-    glVertex2f(0, height/2);
-    glVertex2f(width, height/2);
-    
-    
+  
+    glVertex2f(width, height*2);
+    glVertex2f(width, 0);
+  
     // ground
     glColor3f(.5, .5, .5);  //white
     
     glVertex2f(0, ground_dist);
-    glVertex2f(width, ground_dist);
-    glVertex2f(0,  ground_dist + 3);
-    glVertex2f(height, ground_dist + 3);
+    glVertex2f(4*width, ground_dist);
+
     
     // limb
     
@@ -380,7 +396,7 @@ void reshape(int width, int height)
     /* tell OpenGL we want to display in a recangle that is the
      same size as the window
      */
-    int pad =20;
+    int pad = 20;
     glViewport(pad,pad,2*width -2*pad,2*height -2*pad);
     
     /* switch to the projection matrix */
@@ -392,8 +408,8 @@ void reshape(int width, int height)
     /* set the camera view, orthographic projection in 2D */
     //gluOrtho2D(-1, width,-1,height);
     
-    // gluOrtho2D(-1, width,height,0);
-    gluOrtho2D(0,512,512,0);
+    gluOrtho2D(0, width*2,height*2,0);
+    //gluOrtho2D(0,512,512,0);
     
     
     /* switch back to the model view matrix */
