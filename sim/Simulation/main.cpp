@@ -77,7 +77,7 @@ struct GraphServoDriver : ServoDriver
     std::thread thread[SERVO_NO];
     int angle2pwm[SERVO_MAX_ANGLE+1];
     
-    GraphServoDriver(Degree startAngle[SERVO_NO]) : ServoDriver(1000,startAngle)
+    GraphServoDriver() : ServoDriver(1000)
     {
         Degree pulseAngle;
         for (pulseAngle = SERVO_MIN_ANGLE; pulseAngle <= SERVO_MAX_ANGLE; pulseAngle ++)
@@ -88,7 +88,7 @@ struct GraphServoDriver : ServoDriver
     
     inline Milliseconds setServoAngle(uint8 servoIndex, Degree angle)
     {
-        if (angle >= config[servoIndex].angleMin && angle<= config[servoIndex].angleMax)
+        if (angle >= config[servoIndex].min && angle<= config[servoIndex].max)
         {
             LOG3("Servo:%d angle:%d pulse:%d",servoIndex,angle,angle2pwm[angle]);
                        
@@ -114,8 +114,8 @@ struct GraphServoDriver : ServoDriver
 };
 
 
-Degree startAngles[8] {135,135,135,135,90,90,90,90};
-GraphServoDriver driver {startAngles};
+
+GraphServoDriver driver;
 CyberCat cat {driver};
 
 
@@ -174,7 +174,7 @@ void specialKey(int key, int x,int y)
             cat.bounce();
             break;
         case GLUT_KEY_F2:
-            cat.dinamic(sqrt(2));
+            
             break;
         case GLUT_KEY_F3:
             cat.height(100);

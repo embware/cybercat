@@ -26,8 +26,7 @@ const uint8 BRK = 7; // Knee Back Left
 struct CyberCat
 {
     ServoDriver& driver;
-    Len boneLength = 80;
-    Command* pCommand;
+    Len boneLength = 200;
   
     CyberCat(ServoDriver& driver) : driver {driver}
     {
@@ -170,25 +169,7 @@ struct CyberCat
             driver.add(com.run);
         }
         driver.add(com.run_end);
-    }
-    
-    void dinamic(float hdratio)
-    {
-        if (pCommand != nullptr)
-        {
-            delete[] pCommand;
-
-        }
-        pCommand = new Command[21]
-        {
-            {FLS,150},{BRS,150},{FRS,130},{BLS,130},
-            {FLK, KA(150,hdratio)},{BRK, KA(150,hdratio)},
-            {FRK, KA(130,hdratio)},{BLK, KA(130,hdratio)},
-            {Command::SYN,100},
-            {Command::END}
-        };
-        driver.add(pCommand);
-    }
+    } 
     
     void height(Len height)
     {
@@ -204,9 +185,9 @@ struct CyberCat
         com.height[5] = {BRK,ka};
         com.height[6] = {FRK,ka};
         com.height[7] = {BLK,ka};
-        com.height[8] = {Command::SYN};
+        com.height[8] = {Command::END};
         com.height[9] = {Command::END};
-        
+        LOG("Set height %d mm" , height);
         driver.add(com.height);
     }
     
@@ -217,13 +198,13 @@ struct CyberCat
     
     Len heightFront()
     {
-        Model model {driver.servoAngle[FLS],driver.servoAngle[FLK]};
+        Model model {driver.servoAngle[FLS],driver.servoAngle[FLK],boneLength};
         return model.posFoot.y;
     }
     
     Len heightBack()
     {
-        Model model {driver.servoAngle[BRS],driver.servoAngle[BRK]};
+        Model model {driver.servoAngle[BRS],driver.servoAngle[BRK],boneLength};
         return model.posFoot.y;
     }
     

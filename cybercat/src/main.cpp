@@ -23,9 +23,7 @@ void driverTask(void *ptrParam)
 }
 
 ServoSpeed servoSpeed = 300;
-Degree startAngles[8] {150,150,150,150,60,60,60,60};
-
-ServoDriver driver {servoSpeed,startAngles};
+ServoDriver driver {servoSpeed};
 CyberCat cat {driver};
 
 void setup() 
@@ -134,21 +132,22 @@ void loop()
       if (PS4.data.button.r2)
       {
          LOG("Batt: %d / 16",PS4.data.status.battery);
-         
+         cat.height(300);
          delay(1000);
       }
      
 
-      if (abs(PS4.data.analog.stick.lx) > 10 ) 
+    
+      if (abs(PS4.data.analog.stick.ly) > 10) 
       {
-          LOG("Stick left x= %d",PS4.data.analog.stick.lx);
-          delay(100);
-          
-      }
-      if ( abs(PS4.data.analog.stick.ly) > 10 ) 
-      {
-          LOG("Stick left y= %d",PS4.data.analog.stick.ly);
-          delay(100);
+        int yy = PS4.data.analog.stick.ly;
+
+          LOG("Stick left y = %d",yy);
+          // 150 .. 400
+          // 180 + (127 + PS4.data.analog.stick.ly)*220 / 250;
+          cat.height(180 + (127 + PS4.data.analog.stick.ly)*220 / 250);
+          delay(10);
+
       }
       
       if ( abs(PS4.data.analog.stick.rx) > 10 ) 

@@ -16,8 +16,8 @@
 
 struct ServoConfig
 {
-    Degree angleMin;
-    Degree angleMax;
+    Degree min;
+    Degree max;
 };
 
 ServoConfig defaultConfig[SERVO_NO] {{0,180},{0,180},{0,180},{0,180},{50,180},{50,180},{50,180},{50,180}};
@@ -32,17 +32,17 @@ struct ServoDriver
     PWMServoDriver pwmServo;    
     
    
-    ServoDriver(ServoSpeed servoSpeed, Degree startAngle[SERVO_NO], ServoConfig servoConfig[SERVO_NO]) : servoSpeed {servoSpeed}
+    ServoDriver(ServoSpeed servoSpeed, ServoConfig servoConfig[SERVO_NO]) : servoSpeed {servoSpeed}
     {
         for (int id = 0; id < SERVO_NO; id++)
         {
             config[id]= servoConfig[id];
-            setServoAngle(id, startAngle[id]);
+            servoAngle[id] = 90;
         }
     }
     
-    ServoDriver(ServoSpeed servoSpeed, Degree startAngle[SERVO_NO])
-       : ServoDriver (servoSpeed, startAngle,defaultConfig)
+    ServoDriver(ServoSpeed servoSpeed)
+       : ServoDriver (servoSpeed, defaultConfig)
        {
        }
        
@@ -54,7 +54,7 @@ struct ServoDriver
  
     virtual inline Milliseconds setServoAngle(uint8 servoIndex, Degree angle)
     {
-        if (angle >= config[servoIndex].angleMin && angle<= config[servoIndex].angleMax)
+        if (angle >= config[servoIndex].min && angle<= config[servoIndex].max)
         {
             // first engage (write to) servo to minimize delay
             pwmServo.setServoAngle(servoIndex, angle);

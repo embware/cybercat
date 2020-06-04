@@ -28,10 +28,10 @@ struct Model
         update();
     }
     
-    Model(Degree angleShoulder, Degree angleKnee)
-    : Model {{0,0}, angleShoulder, angleKnee, 80}
+    Model(Degree angleShoulder, Degree angleKnee, Len boneLentgth = 200)
+    : Model {{0,0}, angleShoulder, angleKnee, boneLentgth}
     {}
-    
+
     void update()
     {
         posKnee = posShoulder;
