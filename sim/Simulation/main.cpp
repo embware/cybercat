@@ -171,7 +171,7 @@ void specialKey(int key, int x,int y)
             
         
         case GLUT_KEY_F1:
-            cat.bounce();
+            cat.forward();
             break;
         case GLUT_KEY_F2:
             

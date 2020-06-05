@@ -26,11 +26,15 @@ const uint8 BRK = 7; // Knee Back Left
 struct CyberCat
 {
     ServoDriver& driver;
-    Len boneLength = 200;
+    Len boneLength;
+    Len heightMax;
+    Len heightMin; 
   
-    CyberCat(ServoDriver& driver) : driver {driver}
+    CyberCat(ServoDriver& driver, Len boneLength = 200) : driver {driver}, boneLength { boneLength}
     {
-       
+       heightMax = 2 * boneLength;
+       heightMin = 2 * boneLength * TrigCache.sinus[driver.config[FLK].min/2];
+       LOG3("Cat config | bone: %d mm, height [%d mm, %d mm]",boneLength,heightMin,heightMax);
     }
     
     static uint8 KA(uint8 shoulderAngle,uint8 height, uint8 distance )
@@ -126,7 +130,30 @@ struct CyberCat
             {Command::SYN},
             {Command::END}
         };
+
         
+        Command forward[15]
+        {
+            {FLS, 170}, {FRS, 150},
+            {FLK,  70}, {FRK,  50},
+            {Command::SYN},                       
+                        {FRK, 60},
+            {Command::SYN},                       
+            {FLS, 150},  {FRS, 170},
+            {FLK,  50},  {FRK,  70},
+            {Command::SYN},            
+            {FLK, 60},
+            {Command::SYN},
+            {Command::END}                    
+        };
+
+        Command forward_init[6]
+        {
+            {FLS, 150}, {FRS, 150},
+            {FLK,  60}, {FRK,  60},
+            {Command::SYN},                       
+            {Command::END}                    
+        };
         
     } com;
     
@@ -169,10 +196,27 @@ struct CyberCat
             driver.add(com.run);
         }
         driver.add(com.run_end);
-    } 
-    
-    void height(Len height)
+    }
+
+    void forward()
     {
+        driver.add(com.forward);
+    }
+    
+    void height(Len height, bool sync = true)
+    {
+        if (height > heightMax)
+        {   
+            LOG2("Height %d over limt %d",height, heightMax);
+            height = heightMax;
+        }
+
+        if (height < heightMin)
+        {
+            LOG2("Height %d under limt %d",height, heightMin);
+            height = heightMin;
+        }
+
         const Degree angle = TrigCache.degree(asin((double)height / 2 / boneLength));
         const Degree sa = 180 - angle;
         const Degree ka = 2 * angle;
@@ -181,13 +225,24 @@ struct CyberCat
         com.height[1] = {BRS,sa};
         com.height[2] = {FRS,sa};
         com.height[3] = {BLS,sa};
+
         com.height[4] = {FLK,ka};
         com.height[5] = {BRK,ka};
         com.height[6] = {FRK,ka};
         com.height[7] = {BLK,ka};
-        com.height[8] = {Command::END};
-        com.height[9] = {Command::END};
+      
+        if (sync)
+        {
+            com.height[8] = {Command::SYN};
+            com.height[9] = {Command::END};
+        }
+        else
+        {
+           com.height[8] =  {Command::END};
+        }
+                
         LOG("Set height %d mm" , height);
+        
         driver.add(com.height);
     }
     
@@ -207,13 +262,6 @@ struct CyberCat
         Model model {driver.servoAngle[BRS],driver.servoAngle[BRK],boneLength};
         return model.posFoot.y;
     }
-    
-    
-    // TODO API Calls ..
-    
-    // Len heightFront();
-    
-    // Len heightBack();
    
 };
 
