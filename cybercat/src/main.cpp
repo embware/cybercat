@@ -54,13 +54,31 @@ void setup()
   LOG("%s","Setup finished!");
 }
 
+bool handshake = false;
+int counter=0;
+
 
 void loop() 
 {
+  counter++;
+
   if(PS4.isConnected()) 
   {  
       // Must set some delay because loop overtake time and core 0 task watchdog is trigered
       delay(10); 
+
+      if (!handshake)
+      {
+        handshake = true;
+        LOG("%s","PS4 connected...");
+        PS4.setLed(0,0,0xff);
+        PS4.setRumble(0xff, 0x00);
+        PS4.sendToController();
+        delay(250);
+        PS4.setLed(0x10,0,0);
+        PS4.setRumble(0x0,0x0);
+        PS4.sendToController();
+      }
 
       if ( PS4.data.button.up )
       {
@@ -171,11 +189,13 @@ void loop()
   }
   else
   {
-     
+     handshake = false;
      // This delay is to make the Serial Print more human readable
      // Remove it when you're not trying to see the output
-     delay(5000);
-    
-     LOG("Check in @core %d ...",xPortGetCoreID());
+     delay(500);
+     if (counter % 10 == 0)
+     {
+       LOG("Check in @core %d ...",xPortGetCoreID());
+     } 
    }  
 }
