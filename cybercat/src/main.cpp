@@ -97,7 +97,7 @@ void loop()
       if ( PS4.data.button.right )
       {
         LOG("%s","Cat run!");
-        cat.run();
+        cat.forward();
         delay(200);
       }
 
@@ -105,14 +105,14 @@ void loop()
       {
         LOG("%s","Cat walk!");
 
-        cat.walk();
+        //cat.walk();
         delay(200);
       }
       
      if ( PS4.data.button.circle )
       {
         LOG("%s","Cat bounce!");
-        cat.bounce();
+        //cat.bounce();
         delay(200);
       }
 

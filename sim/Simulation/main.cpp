@@ -163,22 +163,20 @@ void specialKey(int key, int x,int y)
              }
             break;
         case GLUT_KEY_LEFT:
-            cat.walk();
+           
             break;
         case GLUT_KEY_RIGHT:
-            cat.run();
-            break;
-            
-        
-        case GLUT_KEY_F1:
             cat.forward();
             break;
-        case GLUT_KEY_F2:
             
+        case GLUT_KEY_F1:
+            cat.up();
+            break;
+        case GLUT_KEY_F2:
+            cat.down();
             break;
         case GLUT_KEY_F3:
-            cat.height(100);
-           
+            cat.height(cat.boneLength);
         break;
     }
 }
@@ -242,6 +240,7 @@ int main(int argc, char* argv[])
     /* enter the main event loop so that GLUT can process
      all of the window event messages
      */
+    cat.up();
     glutMainLoop();
     
     return 0;

@@ -28,12 +28,13 @@ struct CyberCat
     ServoDriver& driver;
     Len boneLength;
     Len heightMax;
-    Len heightMin; 
-  
+    Len heightMin;
+    
     CyberCat(ServoDriver& driver, Len boneLength = 200) : driver {driver}, boneLength { boneLength}
     {
        heightMax = 2 * boneLength;
        heightMin = 2 * boneLength * TrigCache.sinus[driver.config[FLK].min/2];
+        
        LOG3("Cat config | bone: %d mm, height [%d mm, %d mm]",boneLength,heightMin,heightMax);
     }
     
@@ -53,104 +54,30 @@ struct CyberCat
     
     struct
     {
-        Command up[10]
-        {
-            {FLS,135},{FRS,135},{BRS,135},{BLS,135},
-            {FLK,90},{FRK,90},{BRK,90},{BLK,90},
-            {Command::SYN},{Command::END}
-        };
-        Command down[10]
-        {
-            {FLS,155},{FRS,155},{BRS,155},{BLS,155},
-            {FLK,50},{FRK,50},{BRK,50},{BLK,50},
-            {Command::SYN},{Command::END}
-        };
         
         Command height[10];
         
-        
-        Command bounce[20]
+        Command forward[25];
+        /*
         {
-            {FLS,120},{FLK,60},{BLS,135},{BLK,KA(115)},
-            {FRS,115},{FRK,KA(115)},{BRS,120},{BRK,60},
+            {FLS, si + delta}, {FRS, si}, {BLS, si}, {BRS, si + delta},
+            {FLK,  ki + delta}, {FRK, ki - updelta}, {BLK, ki - updelta}, {BRK,  ki + delta},
             {Command::SYN},
-            {FLS,115},{FLK,KA(115)},{BLS,120},{BLK,60},
-            {FRS,120},{FRK,60},{BRS,115},{BRK,KA(115)},
-            {Command::SYN},{Command::END}
-        };
-
-        
-        Command walk[21]
-        {
-            {FLS,145},{BRS,145},{FRS,135},{BLS,135},
-            {FRK, 85},{BLK, 85},
+                        {FRK,  ki}, {BLK,  ki},
             {Command::SYN},
-            {FRK, 90},{BLK, 90},
+            {FLS, si},  {FRS, si + delta}, {BLS, si + delta}, {BRS, si},
+            {FLK,  ki - updelta},  {FRK,  ki + delta}, {BLK,  ki + delta}, {BRK,  ki - updelta},
             {Command::SYN},
-            {FLS,135},{BRS,135},{FRS,145},{BLS,145},
-            {FLK, 85},{BRK, 85},
-            {Command::SYN},
-            {FLK, 90},{BRK, 90},
+            {FLK,  ki},                          {BRK,  ki},
             {Command::SYN},
             {Command::END}
         };
+         */
         
-        
-        Command walk_end[9]
+        Command forward_init[10]
         {
-            {FRS,135},{BLS,135},
-            {FRK, 85},{BLK, 85},
-            {Command::SYN},
-            {FRK, 90},{BLK, 90},
-            {Command::SYN},
-            {Command::END}
-        };
-        
-        Command run[21]
-        {
-            {FLS,150},{BRS,150},{FRS,130},{BLS,130},
-            {FRK, 85},{BLK, 85},
-            {Command::SYN},
-            {FRK, KA(130)},{BLK, KA(130)},
-            {Command::SYN},
-            {FLS,130},{BRS,130},{FRS,150},{BLS,150},
-            {FLK, 85},{BRK, 85},
-            {Command::SYN},
-            {FLK, KA(130)},{BRK, KA(130)},
-            {Command::SYN},
-            {Command::END}
-        };
-        
-        Command run_end[9]
-        {
-            {FRS,130},{BLS,130},
-            {FRK, 85},{BLK, 85},
-            {Command::SYN},
-            {FRK, KA(130)},{BLK, KA(130)},
-            {Command::SYN},
-            {Command::END}
-        };
-
-        
-        Command forward[15]
-        {
-            {FLS, 170}, {FRS, 150},
-            {FLK,  70}, {FRK,  50},
-            {Command::SYN},                       
-                        {FRK, 60},
-            {Command::SYN},                       
-            {FLS, 150},  {FRS, 170},
-            {FLK,  50},  {FRK,  70},
-            {Command::SYN},            
-            {FLK, 60},
-            {Command::SYN},
-            {Command::END}                    
-        };
-
-        Command forward_init[6]
-        {
-            {FLS, 150}, {FRS, 150},
-            {FLK,  60}, {FRK,  60},
+            {FLS, 150}, {FRS, 150}, {BLS, 150}, {BRS, 150},
+            {FLK,  60}, {FRK,  60}, {BLK,  60}, {BRK,  60},
             {Command::SYN},                       
             {Command::END}                    
         };
@@ -160,44 +87,15 @@ struct CyberCat
     
     void up()
     {
-        driver.add(com.up);
+        height(boneLength * sqrt(2));
     }
     
     void down()
     {
-        driver.add(com.down);
+        height(boneLength/2);
     }
+   
     
-    void bounce(int count = 5)
-    {
-        driver.add(com.up);
-        while(--count > 0)
-        {
-            driver.add(com.bounce);
-        }
-        driver.add(com.up);
-    }
-    
-    void walk(int count = 5)
-    {
-        driver.add(com.up);
-        while(--count > 0)
-        {
-            driver.add(com.walk);
-        }
-        driver.add(com.walk_end);
-    }
-    
-    void run(int count = 5)
-    {
-        driver.add(com.up);
-        while(--count > 0)
-        {
-            driver.add(com.run);
-        }
-        driver.add(com.run_end);
-    }
-
     void forward()
     {
         driver.add(com.forward);
@@ -244,6 +142,48 @@ struct CyberCat
         LOG("Set height %d mm" , height);
         
         driver.add(com.height);
+        
+        update_forward(sa,ka,10,5);
+    }
+    
+    
+    inline void update_forward(Degree shoulder_init, Degree knee_init, Degree move, Degree legup)
+    {
+        int index = 0;
+        com.forward[index++] = {FLS, shoulder_init + move};
+        com.forward[index++] = {FRS, shoulder_init};
+        com.forward[index++] = {BLS, shoulder_init};
+        com.forward[index++] = {BRS, shoulder_init + move};
+        
+        com.forward[index++] = {FLK, knee_init + move};
+        com.forward[index++] = {FRK, knee_init - legup};
+        com.forward[index++] = {BLK, knee_init - legup};
+        com.forward[index++] = {BRK, knee_init + move};
+        
+        com.forward[index++] = {Command::SYN};
+        
+        com.forward[index++] = {FRK, knee_init};
+        com.forward[index++] = {BLK, knee_init};
+        
+        com.forward[index++] = {Command::SYN};
+        
+        com.forward[index++] = {FLS, shoulder_init};
+        com.forward[index++] = {FRS, shoulder_init + move};
+        com.forward[index++] = {BLS, shoulder_init + move};
+        com.forward[index++] = {BRS, shoulder_init};
+
+        com.forward[index++] = {FLK,knee_init - legup};
+        com.forward[index++] = {FRK, knee_init + move};
+        com.forward[index++] = {BLK, knee_init + move};
+        com.forward[index++] = {BRK, knee_init - legup};
+               
+        com.forward[index++] = {Command::SYN};
+               
+        com.forward[index++] = {FLK, knee_init};
+        com.forward[index++] = {BRK, knee_init};
+        
+        com.forward[index++] = {Command::SYN};
+        com.forward[index++] = {Command::END};
     }
     
     inline bool idle()
