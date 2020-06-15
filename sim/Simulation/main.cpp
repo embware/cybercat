@@ -241,6 +241,7 @@ int main(int argc, char* argv[])
      all of the window event messages
      */
     cat.up();
+   
     glutMainLoop();
     
     return 0;

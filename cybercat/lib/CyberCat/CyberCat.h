@@ -38,12 +38,12 @@ struct CyberCat
        LOG3("Cat config | bone: %d mm, height [%d mm, %d mm]",boneLength,heightMin,heightMax);
     }
     
-    static uint8 KA(uint8 shoulderAngle,uint8 height, uint8 distance )
+    inline static uint8 KA(uint8 shoulderAngle,uint8 height, uint8 distance )
     {
         return KA(shoulderAngle,height/distance);
     }
     
-    static uint8 KA(uint8 shoulderAngle,double hdRatio = sqrt(2))
+    inline static uint8 KA(uint8 shoulderAngle,double hdRatio = sqrt(2))
     {
         // formula:
         //  beta = 180 - angle + (double)asin(height/boneLenth - TrigCache.sinus[angle]) * 180 / TrigCache.PI;
@@ -74,13 +74,6 @@ struct CyberCat
         };
          */
         
-        Command forward_init[10]
-        {
-            {FLS, 150}, {FRS, 150}, {BLS, 150}, {BRS, 150},
-            {FLK,  60}, {FRK,  60}, {BLK,  60}, {BRK,  60},
-            {Command::SYN},                       
-            {Command::END}                    
-        };
         
     } com;
     
@@ -95,6 +88,10 @@ struct CyberCat
         height(boneLength/2);
     }
    
+    void stand()
+    {
+        driver.add(com.height);
+    }
     
     void forward()
     {
@@ -116,8 +113,8 @@ struct CyberCat
         }
 
         const Degree angle = TrigCache.degree(asin((double)height / 2 / boneLength));
-        const Degree sa = 180 - angle;
-        const Degree ka = 2 * angle;
+        const Degree sa = 180 - angle;  //sa - shoulder angle
+        const Degree ka = 2 * angle; // ka - knee angle
         
         com.height[0] = {FLS,sa};
         com.height[1] = {BRS,sa};
@@ -142,11 +139,27 @@ struct CyberCat
         LOG("Set height %d mm" , height);
         
         driver.add(com.height);
-        
         update_forward(sa,ka,10,5);
     }
     
-    
+  
+    inline void update_stand(Degree shoulder_init, Degree knee_init)
+    {
+        int index = 0;
+        com.forward[index++] = {FLS, shoulder_init};
+        com.forward[index++] = {FRS, shoulder_init};
+        com.forward[index++] = {BLS, shoulder_init};
+        com.forward[index++] = {BRS, shoulder_init};
+        
+        com.forward[index++] = {FLK, knee_init};
+        com.forward[index++] = {FRK, knee_init};
+        com.forward[index++] = {BLK, knee_init};
+        com.forward[index++] = {BRK, knee_init};
+        
+        com.forward[index++] = {Command::SYN};
+        com.forward[index++] = {Command::END};
+        
+    }
     inline void update_forward(Degree shoulder_init, Degree knee_init, Degree move, Degree legup)
     {
         int index = 0;
