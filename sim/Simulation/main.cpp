@@ -77,7 +77,7 @@ struct GraphServoDriver : ServoDriver
     std::thread thread[SERVO_NO];
     int angle2pwm[SERVO_MAX_ANGLE+1];
     
-    GraphServoDriver() : ServoDriver(1000)
+    GraphServoDriver() : ServoDriver(2500)
     {
         Degree pulseAngle;
         for (pulseAngle = SERVO_MIN_ANGLE; pulseAngle <= SERVO_MAX_ANGLE; pulseAngle ++)
@@ -110,7 +110,9 @@ struct GraphServoDriver : ServoDriver
         for (int id = 0; id < SERVO_NO; id++)
         {
             thread[id].join();
-        }    }
+        }
+        
+    }
 };
 
 
@@ -163,14 +165,14 @@ void specialKey(int key, int x,int y)
              }
             break;
         case GLUT_KEY_LEFT:
-           
+            cat.backward();
             break;
         case GLUT_KEY_RIGHT:
             cat.forward();
             break;
             
         case GLUT_KEY_F1:
-            cat.up();
+            cat.test();
             break;
         case GLUT_KEY_F2:
             cat.down();

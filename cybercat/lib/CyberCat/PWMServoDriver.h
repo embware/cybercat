@@ -53,7 +53,7 @@ struct PWMServoDriver
     
     inline void setServoAngle(uint8 servoIndex, Degree angle)
     {
-        LOG3("Servo:%d angle:%d pulse:%d",servoIndex,angle,angle2pwm[angle]);
+        //LOG3("Servo:%d angle:%d pulse:%d",servoIndex,angle,angle2pwm[angle]);
 #ifdef CATHARDWARE
         pwm.setPWM(servoIndex * 2, 0, angle2pwm[angle]); // (* 2) - to use every second pin on pwd driver connector
 #endif

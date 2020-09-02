@@ -11,6 +11,17 @@
 
 #include "Types.h"
 
+// Servo motor mapping
+
+const uint8 FLS = 0; // Shoulder Front Left
+const uint8 FRS = 1; // Shoulder Front Right
+const uint8 BLS = 2; // Shoulder Back Left
+const uint8 BRS = 3; // Shoulder Back Right
+const uint8 FLK = 4; // Knee Front Left
+const uint8 FRK = 5; // Knee Front Right
+const uint8 BLK = 6; // Knee Back Left
+const uint8 BRK = 7; // Knee Back Left
+
 struct Command
 {
     static const uint8 SYN = 0xFE;
@@ -19,60 +30,5 @@ struct Command
     int  id; // Servo id
     int  value; // Servo angle
 };
-
-struct CommandQueue
-{
-
-    const static int MAX_SLOTS = 64;
-    Command* pBuffer[MAX_SLOTS];
-    
-    uint8 head;
-    uint8 tail;
-    
-    inline void push(Command* pCommands)
-    {
-        LOCK;
-        tail++;
-        if (tail == MAX_SLOTS)
-        {
-            tail = 0;
-        }
-        if (tail != head)
-        {
-            pBuffer[tail] = pCommands;
-        }
-        UNLOCK;
-    }
-    
-    inline Command* pop()
-    {
-        LOCK;
-        Command* pCommands = nullptr;
-        
-        if (head != tail)
-        {
-            head++;
-            if (head == MAX_SLOTS)
-            {
-                head = 0;
-            }
-            pCommands = pBuffer[head];
-            
-        }
-        UNLOCK;
-        return pCommands;
-    }
-    
-    inline bool empty()
-    {
-        LOCK;
-        bool queue_empty = head == tail;
-        UNLOCK;
-        return queue_empty;
-    }
-   
-    
-} commandQueue;
-
 
 #endif /* Command_h */

@@ -9,18 +9,22 @@
 #ifndef ServoDriver_h
 #define ServoDriver_h
 
-#include "Command.h"
+#include "CommandQueue.h"
 #include "PWMServoDriver.h"
 
 #define SERVO_NO    8
 
 struct ServoConfig
 {
-    Degree min;
-    Degree max;
+    Degree min; // min angle allowed
+    Degree max; // max angled allowed
+    Degree offset; // angle offset for calibration
 };
 
-ServoConfig defaultConfig[SERVO_NO] {{0,180},{0,180},{0,180},{0,180},{50,180},{50,180},{50,180},{50,180}};
+ServoConfig defaultConfig[SERVO_NO] {
+    {0,180,0},{0,180,0},{0,180,0},{0,180,0},
+    {50,180,0},{50,180,0},{50,180,0},{50,180,0}
+};
 
 struct ServoDriver
 {
@@ -57,7 +61,8 @@ struct ServoDriver
         if (angle >= config[servoIndex].min && angle<= config[servoIndex].max)
         {
             // first engage (write to) servo to minimize delay
-            pwmServo.setServoAngle(servoIndex, angle);
+            // add calibration offset before calculating to pulse value for servo actuation
+            pwmServo.setServoAngle(servoIndex, angle + config[servoIndex].offset);
 
             Milliseconds delayTime = abs((Milliseconds)(angle - servoAngle[servoIndex])) * servoSpeed/60;
             servoAngle[servoIndex] = angle;
@@ -116,6 +121,11 @@ struct ServoDriver
     inline bool idle()
     {
         return queue.empty();
+    }
+
+    void calibrate(uint8 servoIndex,Degree angleOffset)
+    {
+        config[servoIndex].offset = angleOffset;
     }
   
 };

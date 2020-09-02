@@ -36,6 +36,8 @@
 		53AA84882486F7CA006BCA61 /* Command.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Command.h; sourceTree = "<group>"; };
 		53AA84892486F7CA006BCA61 /* ServoDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServoDriver.h; sourceTree = "<group>"; };
 		53AA848A2486F7CA006BCA61 /* PWMServoDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PWMServoDriver.h; sourceTree = "<group>"; };
+		53F25C832498ECD600576A32 /* CommandQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommandQueue.h; sourceTree = "<group>"; };
+		53F25C842498EDDF00576A32 /* CommandManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommandManager.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +98,8 @@
 				53AA84882486F7CA006BCA61 /* Command.h */,
 				53AA84892486F7CA006BCA61 /* ServoDriver.h */,
 				53AA848A2486F7CA006BCA61 /* PWMServoDriver.h */,
+				53F25C832498ECD600576A32 /* CommandQueue.h */,
+				53F25C842498EDDF00576A32 /* CommandManager.h */,
 			);
 			name = CyberCat;
 			path = ../cybercat/lib/CyberCat;

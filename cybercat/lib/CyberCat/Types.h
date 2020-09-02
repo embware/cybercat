@@ -53,6 +53,7 @@ struct Servo { void write(int angle) {} };
 
 #include "FreeRTOS.h"
 #include "freertos/task.h"
+#include "EEPROM.h"
 
 #define CATHARDWARE ESP32
 
