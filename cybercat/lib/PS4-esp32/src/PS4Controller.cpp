@@ -105,6 +105,7 @@ void PS4Controller::setFlashRate(int onTime, int offTime)
 void PS4Controller::sendToController()
 {
     ps4SetOutput(output);
+    delay(250);
 }
 
 

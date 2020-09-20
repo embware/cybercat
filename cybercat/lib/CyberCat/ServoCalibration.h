@@ -12,27 +12,28 @@
 struct ServoCalibration
 {
     uint8 servoIndex;
-    Degree offset;
     ServoDriver &driver;
+    Degree calibrationAngle;
 
-    ServoCalibration(ServoDriver & driver) : servoIndex {0} , offset{0},  driver {driver}
+    ServoCalibration(ServoDriver & driver) : servoIndex {0} , driver {driver}, calibrationAngle {(Degree)90}
     {
     }
 
     void selectServo()
     {
         // Move servo to show it is selected for calibration
-        driver.setServoAngle(servoIndex,85);
-        delay(200);
-        driver.setServoAngle(servoIndex,90);
-        delay(350);
+        LOG("Calibrate servo [%d]",servoIndex);
+        delay(driver.setServoAngle(servoIndex,calibrationAngle - 5));
+        delay(100);
+        delay(driver.setServoAngle(servoIndex,calibrationAngle));
+        delay(100);
     }
 
     void updateServo()
     {
         // Move servo to show it is selected for calibration
-        driver.setServoAngle(servoIndex,90);
-        delay(350);
+        delay(driver.setServoAngle(servoIndex,calibrationAngle));
+        delay(100);
     }
 
     // Get in calibration position. All servos at 90 angle
@@ -40,7 +41,7 @@ struct ServoCalibration
     {
         for (uint8 index =0; index< SERVO_NO; index++)
         {
-            driver.setServoAngle(index,90);
+            driver.setServoAngle(index,calibrationAngle);
         }
         delay(350);
     }
@@ -54,18 +55,30 @@ struct ServoCalibration
         }
     }
 
+    void prevServo()
+    {
+        if (--servoIndex > SERVO_NO) // unsigned int max 255
+        {
+            servoIndex = SERVO_NO - 1;
+        }
+    }
+
     void offsetIncrease()
     {
+        Degree offset = driver.config[servoIndex].offset;
         offset++;
-        driver.calibrate(servoIndex,offset);
+        driver.calibrate(servoIndex, offset);
         updateServo();
+        LOG2("Selected servo: %d offest: %d",servoIndex, offset);
     }
 
     void offsetDecrease()
     {
+        Degree offset = driver.config[servoIndex].offset;
         offset--;
         driver.calibrate(servoIndex,offset);
         updateServo();
+        LOG2("Selected servo: %d offest: %d",servoIndex, offset);
     }
 
     void nvmRead()

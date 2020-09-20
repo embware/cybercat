@@ -17,20 +17,27 @@ struct CommandManger
     Command height[10];
     Command forward[19];
     Command backward[19];
+    Command walk_forward[30];
+    Command walk_backward[30];
+    Command test[50];
+
     
-    void update_height(Degree sa, Degree ka, Len moveAngle = 15);
+    void updateCommands(Degree sa, Degree ka, Len moveAngle = 8);
     void update_forward(Degree shoulder_init, Degree knee_init, Degree move);
     void update_backward(Degree shoulder_init, Degree knee_init, Degree move);
+    void update_walk_forward(Degree shoulder_init, Degree knee_init, Degree move);
+    void update_walk_backward(Degree shoulder_init, Degree knee_init, Degree move);
+    
+   
 
-#ifdef CATSIM
-    Command test[50];
+   
     void update_test(Degree shoulder_init, Degree knee_init, Degree move);
-#endif // CATSIM
+
    
 };
 
 
-inline void CommandManger::update_height(Degree sa, Degree ka, Len moveAngle)
+inline void CommandManger::updateCommands(Degree sa, Degree ka, Len moveAngle)
    {
        height[0] = {FLS,sa};
        height[1] = {BRS,sa};
@@ -47,16 +54,20 @@ inline void CommandManger::update_height(Degree sa, Degree ka, Len moveAngle)
        height[8] = {Command::SYN};
        height[9] = {Command::END};
       
-       update_forward(sa,ka,moveAngle);
-       update_backward(sa,ka,moveAngle);
-       
-#ifdef CATSIM
-           update_test(sa,ka,moveAngle);
-#endif
+       update_walk_forward(sa,ka,moveAngle);
+       update_walk_backward(sa,ka,moveAngle);
+     
+       update_test(sa,ka,moveAngle);
+
            
    }
    
- 
+inline void CommandManger::update_test(Degree shoulder_init, Degree knee_init, Degree move)
+{
+    // TODO for testing 
+}
+
+
 inline void CommandManger::update_forward(Degree shoulder_init, Degree knee_init, Degree move)
 {
     int index = 0;
@@ -124,40 +135,106 @@ inline void CommandManger::update_backward(Degree shoulder_init, Degree knee_ini
     backward[index++] = {Command::END};
 }
 
-#ifdef CATSIM
 
-inline void CommandManger::update_test(Degree shoulder_init, Degree knee_init, Degree move)
+
+
+inline void CommandManger::update_walk_forward(Degree shoulder_init, Degree knee_init, Degree move)
 {
     int index = 0;
-    test[index++] = {FLS, shoulder_init + move};
-    test[index++] = {FLK, knee_init + move};
+    Degree upAngle = move;
+   
+    walk_forward[index++] = {FLS, shoulder_init + move};
+    walk_forward[index++] = {FLK, knee_init + move};
     
-    test[index++] = {FRS, shoulder_init};
-    test[index++] = {FRK, knee_init};
+    walk_forward[index++] = {FRS, shoulder_init};
+    walk_forward[index++] = {FRK, knee_init - upAngle};
     
-    test[index++] = {BLS, shoulder_init};
-    test[index++] = {BLK, knee_init};
+    walk_forward[index++] = {BLS, shoulder_init};
+    walk_forward[index++] = {BLK, knee_init - upAngle};
     
-    test[index++] = {BRS, shoulder_init + move};
-    test[index++] = {BRK, knee_init + move};
+    walk_forward[index++] = {BRS, shoulder_init + move};
+    walk_forward[index++] = {BRK, knee_init + move};
 
-    test[index++] = {Command::SYN};
+    walk_forward[index++] = {Command::SYN};
     
-    test[index++] = {FLS, shoulder_init};
-    test[index++] = {FLK, knee_init};
+    walk_forward[index++] = {FRK, knee_init};
     
-    test[index++] = {FRS, shoulder_init + move};
-    test[index++] = {FRK, knee_init + move};
+    walk_forward[index++] = {BLK, knee_init};
     
-    test[index++] = {BLS, shoulder_init + move};
-    test[index++] = {BLK, knee_init + move};
+    walk_forward[index++] = {Command::SYN};
     
-    test[index++] = {BRS, shoulder_init};
-    test[index++] = {BRK, knee_init};
-
-    test[index++] = {Command::SYN};
-    test[index++] = {Command::END};
+    walk_forward[index++] = {FLS, shoulder_init};
+    walk_forward[index++] = {FLK, knee_init - upAngle};
+    
+    walk_forward[index++] = {FRS, shoulder_init + move};
+    walk_forward[index++] = {FRK, knee_init + move};
+    
+    walk_forward[index++] = {BLS, shoulder_init + move};
+    walk_forward[index++] = {BLK, knee_init + move};
+    
+    walk_forward[index++] = {BRS, shoulder_init};
+    walk_forward[index++] = {BRK, knee_init - upAngle};
+    
+    walk_forward[index++] = {Command::SYN};
+   
+    walk_forward[index++] = {FLK, knee_init};
+    
+    walk_forward[index++] = {BRK, knee_init };
+    
+    walk_forward[index++] = {Command::SYN};
+    walk_forward[index++] = {Command::END};
 }
-#endif // CAT_SIM
+
+inline void CommandManger::update_walk_backward(Degree shoulder_init, Degree knee_init, Degree move)
+{
+    int index = 0;
+    Degree upAngle = move * 2;
+   
+    walk_backward[index++] = {FLS, shoulder_init + move};
+    walk_backward[index++] = {FLK, knee_init + move - upAngle};
+    
+    walk_backward[index++] = {FRS, shoulder_init};
+    walk_backward[index++] = {FRK, knee_init};
+    
+    walk_backward[index++] = {BLS, shoulder_init};
+    walk_backward[index++] = {BLK, knee_init};
+    
+    walk_backward[index++] = {BRS, shoulder_init + move};
+    walk_backward[index++] = {BRK, knee_init + move - upAngle};
+
+    walk_backward[index++] = {Command::SYN};
+    
+    //walk_backward[index++] = {FLS, shoulder_init + move};
+    walk_backward[index++] = {FLK, knee_init + move};
+    
+    //walk_backward[index++] = {BRS, shoulder_init + move};
+    walk_backward[index++] = {BRK, knee_init + move};
+
+    walk_backward[index++] = {Command::SYN};
+    
+    walk_backward[index++] = {FLS, shoulder_init};
+    walk_backward[index++] = {FLK, knee_init};
+    
+    walk_backward[index++] = {FRS, shoulder_init + move};
+    walk_backward[index++] = {FRK, knee_init + move - upAngle};
+    
+    walk_backward[index++] = {BLS, shoulder_init + move};
+    walk_backward[index++] = {BLK, knee_init + move - upAngle};
+    
+    walk_backward[index++] = {BRS, shoulder_init};
+    walk_backward[index++] = {BRK, knee_init};
+    
+    walk_backward[index++] = {Command::SYN};
+    
+    walk_backward[index++] = {FRS, shoulder_init + move};
+    walk_backward[index++] = {FRK, knee_init + move};
+      
+    walk_backward[index++] = {BLS, shoulder_init + move};
+    walk_backward[index++] = {BLK, knee_init + move};
+    
+    walk_backward[index++] = {Command::SYN};
+    walk_backward[index++] = {Command::END};
+}
+
    
 #endif /* CommandManager_h */

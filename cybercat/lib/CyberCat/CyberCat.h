@@ -24,6 +24,7 @@ struct CyberCat
     Len heightMax;
     Len heightMin;
     CommandManger com;
+    Degree moveAngle = 10;
     
     CyberCat(ServoDriver& driver, Len boneLength = 200) : driver {driver}, boneLength { boneLength}
     {
@@ -33,14 +34,26 @@ struct CyberCat
        LOG3("Cat config | bone: %d mm, height [%d mm, %d mm]",boneLength,heightMin,heightMax);
     }
     
-    void up()
+    void standup()
     {
-        height(boneLength * sqrt(2));
+        height(sqrt(2) * boneLength);
+    }
+
+    void stand_down()
+    {
+        height(0.5 * boneLength);
     }
     
+    void up()
+    {
+        const Len dHeight = 10;
+        height(heightFront() + dHeight);
+    }
+
     void down()
     {
-        height(boneLength/2);
+        const Len dHeight = 10;
+        height(heightFront() - dHeight);
     }
    
     void standby()
@@ -58,12 +71,26 @@ struct CyberCat
         driver.add(com.backward);
     }
     
-#ifdef CATSIM
+    void walk_forward()
+    {
+        driver.add(com.walk_forward);
+    }
+    
+    void walk_backward()
+    {
+        driver.add(com.walk_backward);
+    }
+    
+
     void test()
     {
         driver.add(com.test);
     }
-#endif
+
+    void step(Len distance)
+    {
+        // TODO calculate moveAngle based on step distance
+    }
     
     void height(Len height)
     {
@@ -84,12 +111,12 @@ struct CyberCat
         const Degree sa = 180 - angle;  //sa - shoulder angle
         const Degree ka = 2 * angle; // ka - knee angle
         
-        com.update_height(sa,ka);
+        com.updateCommands(sa,ka, moveAngle);
         
         driver.add(com.height);
     }
     
-   
+        
     inline bool idle()
     {
         return driver.idle();
