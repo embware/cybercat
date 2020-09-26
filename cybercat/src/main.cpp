@@ -2,6 +2,7 @@
 #include "esp_log.h"
 #include "CyberCat.h"
 #include <PS4Controller.h>
+#include "WiFi.h"
 
 #define DRIVER_TASK_NAME "DriverTask"
 #define DRIVER_TASK_PRIORITY  (0) /* Need to be 0 <- highest priority */
@@ -25,19 +26,30 @@ StateManager state {};
 
 void driverTask(void *ptrParam)
 {
-  LOG("DriverTask @core %d",xPortGetCoreID());
   ServoDriver *pdriver = (ServoDriver*) ptrParam;
+  delay(100);
+  LOG("DriverTask @core %d",xPortGetCoreID());
   for(;;)
   {
       pdriver->actuate();
   }
 }
 
+void turnOffWIFI()
+{
+  LOG("%s","Turning WIFI OFF");
+  WiFi.disconnect(true);
+  WiFi.mode(WIFI_OFF);
+}
+
 void setup() 
 {
+  delay(250);
+
   LOG2("  RAM: %d/%d KB",ESP.getFreeHeap()/1024,ESP.getHeapSize()/1024);
   LOG2("PSRAM: %d/%d KB",ESP.getFreePsram()/1024, ESP.getPsramSize()/1024);
 
+  turnOffWIFI();
   
   LOG("Setup PS4 Controller MAC: %s",PS4_CONTROLLER_MAC);
   PS4.begin(PS4_CONTROLLER_MAC);
@@ -68,7 +80,6 @@ void loop()
 
   if(PS4.isConnected()) 
   {   
-   
     if (state.check(STATE_STANDBY))
     {
       if (PS4.data.analog.stick.ly > 10)
@@ -234,11 +245,11 @@ void loop()
     
     // This delay is to make the Serial Print more human readable
     // Remove it when you're not trying to see the output
-    delay(100);
-    if (counter++ % 30 == 0)
+    delay(50);
+    if (++counter % 100 == 0)
     {
       state.set(STATE_OFFLINE);
-      LOG("Check @ core_%d",xPortGetCoreID());
+      LOG2("Counter %d @core_%d",counter, xPortGetCoreID());
     } 
   }
   // IMPORTANT !
