@@ -77,7 +77,7 @@ struct GraphServoDriver : ServoDriver
     std::thread thread[SERVO_NO];
     int angle2pwm[SERVO_MAX_ANGLE+1];
     
-    GraphServoDriver() : ServoDriver(1500)
+    GraphServoDriver() : ServoDriver(3000)
     {
         Degree pulseAngle;
         for (pulseAngle = SERVO_MIN_ANGLE; pulseAngle <= SERVO_MAX_ANGLE; pulseAngle ++)
@@ -244,7 +244,7 @@ int main(int argc, char* argv[])
     /* enter the main event loop so that GLUT can process
      all of the window event messages
      */
-    cat.up();
+    cat.standup();
    
     glutMainLoop();
     

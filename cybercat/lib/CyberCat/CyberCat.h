@@ -28,7 +28,7 @@ struct CyberCat
     
     CyberCat(ServoDriver& driver, Len boneLength = 200) : driver {driver}, boneLength { boneLength}
     {
-       heightMax = 2 * boneLength;
+       heightMax = 2 * boneLength - 20;
        heightMin = 2 * boneLength * TrigCache.sinus[driver.config[FLK].min/2];
         
        LOG3("Cat config | bone: %d mm, height [%d mm, %d mm]",boneLength,heightMin,heightMax);

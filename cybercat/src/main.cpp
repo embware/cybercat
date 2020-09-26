@@ -183,7 +183,7 @@ void loop()
     {
       if (PS4.data.button.triangle)
       {
-        cat.up();
+        cat.standup();
         state.set(STATE_STANDBY);
       }
       if (PS4.data.button.options)
