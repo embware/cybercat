@@ -20,11 +20,22 @@
 
 #include "Types.h"
 
+#define CUSTOM_SDA_SCL
+
 #ifdef CATHARDWARE
     #include <Wire.h>
     #include <Adafruit_PWMServoDriver.h>
 
-    Adafruit_PWMServoDriver pwm;
+    Adafruit_PWMServoDriver *pwm;
+
+    #define CUSTOM_SDA_SCL_PINS
+
+
+    #ifdef CUSTOM_SDA_SCL_PINS
+    #define CUSTOM_SDA 21
+    #define CUSTOM_SCL 13
+    TwoWire i2cWire = TwoWire(0);
+    #endif // CUSTOM_SDA_SCL_PINS
 #endif
 
 
@@ -45,8 +56,14 @@ struct PWMServoDriver
     void setup()
     {
 #ifdef CATHARDWARE
-        pwm.begin();
-        pwm.setPWMFreq(FREQUENCY);
+    #ifdef CUSTOM_SDA_SCL_PINS
+        i2cWire.begin(CUSTOM_SDA,CUSTOM_SCL,100000);
+        pwm = new Adafruit_PWMServoDriver(0x40,i2cWire);
+    #else
+        pwm = new Adafruit_PWMServoDriver();
+    #endif // CUSTOM_SDA_SCL_PINS
+        pwm->begin();
+        pwm->setPWMFreq(FREQUENCY);
 #endif
     }
     
@@ -55,7 +72,7 @@ struct PWMServoDriver
     {
         //LOG3("Servo:%d angle:%d pulse:%d",servoIndex,angle,angle2pwm[angle]);
 #ifdef CATHARDWARE
-        pwm.setPWM(servoIndex * 2, 0, angle2pwm[angle]); // (* 2) - to use every second pin on pwd driver connector
+        pwm->setPWM(servoIndex * 2, 0, angle2pwm[angle]); // (* 2) - to use every second pin on pwd driver connector
 #endif
     }
 };

@@ -141,7 +141,7 @@ inline void CommandManger::update_backward(Degree shoulder_init, Degree knee_ini
 inline void CommandManger::update_walk_forward(Degree shoulder_init, Degree knee_init, Degree moveShoulder)
 {
     int index = 0;
-    Degree moveKnee =  round((float) knee_init/shoulder_init * moveShoulder) / 2;
+    Degree moveKnee =  round((double) knee_init/shoulder_init * moveShoulder / 2 );
     Degree upAngle = moveShoulder;
    
     walk_forward[index++] = {FLS, shoulder_init + moveShoulder};
@@ -190,7 +190,7 @@ inline void CommandManger::update_walk_backward(Degree shoulder_init, Degree kne
 {
     int index = 0;
    
-    Degree moveKnee =  round((float) knee_init * moveShoulder /shoulder_init ) / 2;
+    Degree moveKnee =  round((double) knee_init * moveShoulder / shoulder_init / 2);
     Degree upAngle = moveShoulder;
    
     walk_backward[index++] = {FLS, shoulder_init - moveShoulder};
