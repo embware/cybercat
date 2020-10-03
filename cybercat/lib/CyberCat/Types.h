@@ -19,7 +19,7 @@ typedef uint8_t uint8;
 #define nullptr 0
 #endif
 
-const double PI = 3.141592653589793238463;
+const double PI = 3.141592653589793238462643383279502884;
 
 // Instead of Arduino map function (this is more precise)
 inline static int map_prop (int x, int in_min, int in_max, int out_min, int out_max)

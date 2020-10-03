@@ -24,9 +24,9 @@ struct CyberCat
     Len heightMax;
     Len heightMin;
     CommandManger com;
-    Degree moveAngle = 10;
+    Degree moveAngle;
     
-    CyberCat(ServoDriver& driver, Len boneLength = 200) : driver {driver}, boneLength { boneLength}
+    CyberCat(ServoDriver& driver, Len boneLength = 200) : driver {driver}, boneLength { boneLength} , moveAngle {10}
     {
        heightMax = 2 * boneLength - 20;
        heightMin = 2 * boneLength * TrigCache.sinus[driver.config[FLK].min/2];
@@ -46,13 +46,13 @@ struct CyberCat
     
     void up()
     {
-        const Len dHeight = 10;
+        const Len dHeight = 5;
         height(heightFront() + dHeight);
     }
 
     void down()
     {
-        const Len dHeight = 10;
+        const Len dHeight = 5;
         height(heightFront() - dHeight);
     }
    
@@ -73,12 +73,14 @@ struct CyberCat
     
     void walk_forward()
     {
-        driver.add(com.walk_forward);
+        //driver.add(com.walk_forward);
+        driver.add(com.forward);
     }
     
     void walk_backward()
     {
-        driver.add(com.walk_backward);
+        //driver.add(com.walk_backward);
+        driver.add(com.backward);
     }
     
 
@@ -107,7 +109,7 @@ struct CyberCat
         }
         LOG("Set height %d mm" , height);
         
-        const Degree angle = TrigCache.degree(asin((double)height / 2 / boneLength));
+        const Degree angle = TrigCache.degree(asin((double)height * 0.5 / boneLength));
         const Degree sa = 180 - angle;  //sa - shoulder angle
         const Degree ka = 2 * angle; // ka - knee angle
         
@@ -116,7 +118,11 @@ struct CyberCat
         driver.add(com.height);
     }
     
-        
+    void setMoveAngle(Degree angle)
+    {
+        moveAngle = angle;
+    }
+    
     inline bool idle()
     {
         return driver.idle();

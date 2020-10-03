@@ -77,7 +77,7 @@ struct GraphServoDriver : ServoDriver
     std::thread thread[SERVO_NO];
     int angle2pwm[SERVO_MAX_ANGLE+1];
     
-    GraphServoDriver() : ServoDriver(3000)
+    GraphServoDriver() : ServoDriver(1000)
     {
         Degree pulseAngle;
         for (pulseAngle = SERVO_MIN_ANGLE; pulseAngle <= SERVO_MAX_ANGLE; pulseAngle ++)
@@ -165,12 +165,13 @@ void specialKey(int key, int x,int y)
              }
             break;
         case GLUT_KEY_LEFT:
-            //cat.backward();
-            cat.walk_backward();
+            cat.backward();
+            //cat.walk_backward();
+       
             break;
         case GLUT_KEY_RIGHT:
-            //cat.forward();
-            cat.walk_forward();
+            cat.forward();
+            //cat.walk_forward();
             break;
             
         case GLUT_KEY_F1:
@@ -238,7 +239,7 @@ int main(int argc, char* argv[])
     //glutMouseFunc(mouse);
     
     /* set the default background color to black */
-    glClearColor(0,0,0,.9);
+    glClearColor(0,0,0,1);
     
     
     /* enter the main event loop so that GLUT can process
@@ -275,14 +276,14 @@ void drawLimb(Model &limb)
 
 void drawFoot(Coord foot)
 {
-    const int size = 2.5;
+    const float size = 2;
     //foot
     glBegin(GL_QUADS);
+    glColor3f(1, 1, 0);  //yellow
     glVertex2f(foot.x - size, foot.y - size);
     glVertex2f(foot.x + size, foot.y - size);
     glVertex2f(foot.x + size, foot.y + size);
     glVertex2f(foot.x - size, foot.y + size);
-    
     glEnd();
 }
 

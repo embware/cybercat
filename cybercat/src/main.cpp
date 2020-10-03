@@ -16,7 +16,7 @@
 uint8 counter = 0;
 
 
-ServoSpeed servoSpeed = 300;
+ServoSpeed servoSpeed = 400;
 ServoDriver driver {servoSpeed};
 CyberCat cat {driver};
 

@@ -14,22 +14,20 @@
 
 struct CommandManger
 {
+    Degree upAngle = 15;
+    
     Command height[10];
-    Command forward[19];
-    Command backward[19];
-    Command walk_forward[30];
-    Command walk_backward[30];
+    Command forward[64];
+    Command backward[64];
+    Command walk_forward[64];
+    Command walk_backward[64];
     Command test[50];
 
-    
-    void updateCommands(Degree sa, Degree ka, Len moveAngle = 8);
+    void updateCommands(Degree sa, Degree ka, Len moveAngle);
     void update_forward(Degree shoulder_init, Degree knee_init, Degree move);
     void update_backward(Degree shoulder_init, Degree knee_init, Degree move);
     void update_walk_forward(Degree shoulder_init, Degree knee_init, Degree move);
     void update_walk_backward(Degree shoulder_init, Degree knee_init, Degree move);
-    
-   
-
    
     void update_test(Degree shoulder_init, Degree knee_init, Degree move);
 
@@ -54,6 +52,9 @@ inline void CommandManger::updateCommands(Degree sa, Degree ka, Len moveAngle)
        height[8] = {Command::SYN};
        height[9] = {Command::END};
       
+       update_forward(sa,ka,moveAngle);
+       update_backward(sa,ka,moveAngle);
+       
        update_walk_forward(sa,ka,moveAngle);
        update_walk_backward(sa,ka,moveAngle);
      
@@ -67,83 +68,105 @@ inline void CommandManger::update_test(Degree shoulder_init, Degree knee_init, D
     // TODO for testing 
 }
 
-
-inline void CommandManger::update_forward(Degree shoulder_init, Degree knee_init, Degree move)
+inline void CommandManger::update_forward(Degree shoulder_init, Degree knee_init, Degree moveShoulder)
 {
     int index = 0;
-    forward[index++] = {FLS, shoulder_init + move};
-    forward[index++] = {FLK, knee_init + move};
     
-    forward[index++] = {FRS, shoulder_init};
-    forward[index++] = {FRK, knee_init};
+    const Degree moveKnee =  round((double) knee_init * moveShoulder * 0.5 /shoulder_init  );
     
-    forward[index++] = {BLS, shoulder_init};
-    forward[index++] = {BLK, knee_init};
     
-    forward[index++] = {BRS, shoulder_init + move};
-    forward[index++] = {BRK, knee_init + move};
+    forward[index++] = {FLS, shoulder_init - moveShoulder};
+    forward[index++] = {FLK, knee_init + moveKnee - upAngle};
+    
+    forward[index++] = {FRS, shoulder_init + moveShoulder};
+    forward[index++] = {FRK, knee_init + moveKnee};
+    
+    forward[index++] = {BLS, shoulder_init + moveShoulder};
+    forward[index++] = {BLK, knee_init + moveKnee};
+    
+    forward[index++] = {BRS, shoulder_init - moveShoulder};
+    forward[index++] = {BRK, knee_init + moveKnee - upAngle};
 
     forward[index++] = {Command::SYN};
     
-    forward[index++] = {FLS, shoulder_init};
-    forward[index++] = {FLK, knee_init};
-    
-    forward[index++] = {FRS, shoulder_init + move};
-    forward[index++] = {FRK, knee_init + move};
-    
-    forward[index++] = {BLS, shoulder_init + move};
-    forward[index++] = {BLK, knee_init + move};
-    
-    forward[index++] = {BRS, shoulder_init};
-    forward[index++] = {BRK, knee_init};
+    forward[index++] = {FLK, knee_init + moveKnee};
+    forward[index++] = {BRK, knee_init + moveKnee};
 
     forward[index++] = {Command::SYN};
+    
+    forward[index++] = {FLS, shoulder_init + moveShoulder};
+    forward[index++] = {FLK, knee_init + moveKnee};
+    
+    forward[index++] = {FRS, shoulder_init - moveShoulder};
+    forward[index++] = {FRK, knee_init + moveKnee - upAngle};
+    
+    forward[index++] = {BLS, shoulder_init - moveShoulder};
+    forward[index++] = {BLK, knee_init + moveKnee - upAngle};
+    
+    forward[index++] = {BRS, shoulder_init + moveShoulder};
+    forward[index++] = {BRK, knee_init + moveKnee};
+
+    forward[index++] = {Command::SYN};
+    
+    forward[index++] = {FRK, knee_init + moveKnee};
+    forward[index++] = {BLK, knee_init + moveKnee};
+    
     forward[index++] = {Command::END};
 }
 
-
-inline void CommandManger::update_backward(Degree shoulder_init, Degree knee_init, Degree move)
+inline void CommandManger::update_backward(Degree shoulder_init, Degree knee_init, Degree moveShoulder)
 {
-    int index = 0;
-    backward[index++] = {FLS, shoulder_init - move};
-    backward[index++] = {FLK, knee_init + move};
+    int i = 0;
     
-    backward[index++] = {FRS, shoulder_init};
-    backward[index++] = {FRK, knee_init};
+    const Degree moveKnee =  round((double) knee_init * moveShoulder * 0.5 /shoulder_init);
     
-    backward[index++] = {BLS, shoulder_init};
-    backward[index++] = {BLK, knee_init};
     
-    backward[index++] = {BRS, shoulder_init - move};
-    backward[index++] = {BRK, knee_init + move};
+    backward[i++] = {FLS, shoulder_init - moveShoulder};
+    backward[i++] = {FLK, knee_init + moveKnee };
+    
+    backward[i++] = {FRS, shoulder_init + moveShoulder};
+    backward[i++] = {FRK, knee_init + moveKnee - upAngle};
+    
+    backward[i++] = {BLS, shoulder_init + moveShoulder};
+    backward[i++] = {BLK, knee_init + moveKnee - upAngle};
+    
+    backward[i++] = {BRS, shoulder_init - moveShoulder};
+    backward[i++] = {BRK, knee_init + moveKnee };
 
-    backward[index++] = {Command::SYN};
+    backward[i++] = {Command::SYN};
     
-    backward[index++] = {FLS, shoulder_init};
-    backward[index++] = {FLK, knee_init};
-    
-    backward[index++] = {FRS, shoulder_init - move};
-    backward[index++] = {FRK, knee_init + move};
-    
-    backward[index++] = {BLS, shoulder_init - move};
-    backward[index++] = {BLK, knee_init + move};
-    
-    backward[index++] = {BRS, shoulder_init};
-    backward[index++] = {BRK, knee_init};
+    backward[i++] = {FRK, knee_init + moveKnee};
+    backward[i++] = {BLK, knee_init + moveKnee};
 
-    backward[index++] = {Command::SYN};
-    backward[index++] = {Command::END};
+    backward[i++] = {Command::SYN};
+    
+    backward[i++] = {FLS, shoulder_init + moveShoulder};
+    backward[i++] = {FLK, knee_init + moveKnee - upAngle};
+    
+    backward[i++] = {FRS, shoulder_init - moveShoulder};
+    backward[i++] = {FRK, knee_init + moveKnee};
+    
+    backward[i++] = {BLS, shoulder_init - moveShoulder};
+    backward[i++] = {BLK, knee_init + moveKnee};
+    
+    backward[i++] = {BRS, shoulder_init + moveShoulder};
+    backward[i++] = {BRK, knee_init + moveKnee- upAngle};
+
+    backward[i++] = {Command::SYN};
+    
+    backward[i++] = {FLK, knee_init + moveKnee};
+    backward[i++] = {BRK, knee_init + moveKnee};
+    
+    backward[i++] = {Command::END};
 }
-
-
-
 
 inline void CommandManger::update_walk_forward(Degree shoulder_init, Degree knee_init, Degree moveShoulder)
 {
     int index = 0;
-    Degree moveKnee =  round((double) knee_init/shoulder_init * moveShoulder / 2 );
-    Degree upAngle = moveShoulder;
-   
+    
+    Degree moveKnee =  round((double) knee_init * moveShoulder * 0.5 /shoulder_init  );
+       
+      
     walk_forward[index++] = {FLS, shoulder_init + moveShoulder};
     walk_forward[index++] = {FLK, knee_init + moveKnee};
     
@@ -186,12 +209,15 @@ inline void CommandManger::update_walk_forward(Degree shoulder_init, Degree knee
     walk_forward[index++] = {Command::END};
 }
 
+
+
+
 inline void CommandManger::update_walk_backward(Degree shoulder_init, Degree knee_init, Degree moveShoulder)
 {
     int index = 0;
-   
-    Degree moveKnee =  round((double) knee_init * moveShoulder / shoulder_init / 2);
-    Degree upAngle = moveShoulder;
+
+    Degree moveKnee =  round((double) knee_init * moveShoulder * 0.5 /shoulder_init  );
+    
    
     walk_backward[index++] = {FLS, shoulder_init - moveShoulder};
     walk_backward[index++] = {FLK, knee_init + moveKnee};
