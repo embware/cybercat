@@ -14,6 +14,8 @@
 
 #define SERVO_NO    8
 
+
+
 struct ServoConfig
 {
     Degree min; // min angle allowed
@@ -21,9 +23,12 @@ struct ServoConfig
     Degree offset; // angle offset for calibration
 };
 
+#define DEF_MAX_ANGLE 170
+#define DEF_MIN_ANGLE 60
+
 ServoConfig defaultConfig[SERVO_NO] {
-    {0,180,0},{0,180,0},{0,180,0},{0,180,0},
-    {50,180,0},{50,180,0},{50,180,0},{50,180,0}
+    {0,DEF_MAX_ANGLE,0},{0,DEF_MAX_ANGLE,0},{0,DEF_MAX_ANGLE,0},{0,DEF_MAX_ANGLE,0},
+    {DEF_MIN_ANGLE,DEF_MAX_ANGLE,0},{DEF_MIN_ANGLE,DEF_MAX_ANGLE,0},{DEF_MIN_ANGLE,DEF_MAX_ANGLE,0},{DEF_MIN_ANGLE,DEF_MAX_ANGLE,0}
 };
 
 struct ServoDriver

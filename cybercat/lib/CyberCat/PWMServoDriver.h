@@ -20,8 +20,6 @@
 
 #include "Types.h"
 
-#define CUSTOM_SDA_SCL
-
 #ifdef CATHARDWARE
     #include <Wire.h>
     #include <Adafruit_PWMServoDriver.h>
@@ -32,8 +30,8 @@
 
 
     #ifdef CUSTOM_SDA_SCL_PINS
-    #define CUSTOM_SDA 21
-    #define CUSTOM_SCL 13
+    #define CUSTOM_SDA 13
+    #define CUSTOM_SCL 14
     TwoWire i2cWire = TwoWire(0);
     #endif // CUSTOM_SDA_SCL_PINS
 #endif

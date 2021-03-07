@@ -46,6 +46,8 @@ struct Servo { void write(int angle) {} };
 #define LOG(form,msg) printf(form,msg); printf("\r\n")
 #define LOG2(form,msg1,msg2) printf(form,msg1,msg2); printf("\r\n")
 #define LOG3(form,msg1,msg2,msg3) printf(form,msg1,msg2,msg3); printf("\r\n")
+#define LOG4(form,msg1,msg2,msg3,msg4) printf(form,msg1,msg2,msg3,msg4); printf("\r\n")
+
 
 #endif
 
@@ -68,6 +70,7 @@ portMUX_TYPE mutex = portMUX_INITIALIZER_UNLOCKED;
 #define LOG(format,msg) ESP_LOGD(LOG_TAG,format,msg)
 #define LOG2(format,msg1,msg2) ESP_LOGD(LOG_TAG,format,msg1,msg2)
 #define LOG3(format,msg1,msg2,msg3) ESP_LOGD(LOG_TAG,format,msg1,msg2,msg3)
+#define LOG4(format,msg1,msg2,msg3,msg4) ESP_LOGD(LOG_TAG,format,msg1,msg2,msg3,msg4)
 #endif
 
 typedef int Degree; // [0,180] degrees

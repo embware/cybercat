@@ -90,7 +90,7 @@ struct GraphServoDriver : ServoDriver
     {
         if (angle >= config[servoIndex].min && angle<= config[servoIndex].max)
         {
-            LOG3("Servo:%d angle:%d pulse:%d",servoIndex,angle,angle2pwm[angle]);
+            // LOG3("Servo:%d angle:%d pulse:%d",servoIndex,angle,angle2pwm[angle]);
                        
             Milliseconds delayTime = abs((Milliseconds)(angle - servoAngle[servoIndex])) * servoSpeed/60;
             
@@ -165,13 +165,13 @@ void specialKey(int key, int x,int y)
              }
             break;
         case GLUT_KEY_LEFT:
-            cat.backward();
-            //cat.walk_backward();
+            //cat.backward();
+            cat.walk_backward();
        
             break;
         case GLUT_KEY_RIGHT:
-            cat.forward();
-            //cat.walk_forward();
+            //cat.forward();
+            cat.walk_forward();
             break;
             
         case GLUT_KEY_F1:

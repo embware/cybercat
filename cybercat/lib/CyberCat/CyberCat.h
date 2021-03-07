@@ -26,12 +26,12 @@ struct CyberCat
     CommandManger com;
     Degree moveAngle;
     
-    CyberCat(ServoDriver& driver, Len boneLength = 200) : driver {driver}, boneLength { boneLength} , moveAngle {10}
+    CyberCat(ServoDriver& driver, Len boneLength = 200) : driver {driver}, boneLength { boneLength} , moveAngle {5}
     {
        heightMax = 2 * boneLength - 20;
        heightMin = 2 * boneLength * TrigCache.sinus[driver.config[FLK].min/2];
         
-       LOG3("Cat config | bone: %d mm, height [%d mm, %d mm]",boneLength,heightMin,heightMax);
+       LOG4("Cat config | bone: %d mm, height [min %d mm, max %d mm] mov-angle %d deg",boneLength,heightMin,heightMax,moveAngle);
     }
     
     void standup()
@@ -46,13 +46,13 @@ struct CyberCat
     
     void up()
     {
-        const Len dHeight = 5;
+        const Len dHeight = 20;
         height(heightFront() + dHeight);
     }
 
     void down()
     {
-        const Len dHeight = 5;
+        const Len dHeight = 20;
         height(heightFront() - dHeight);
     }
    
@@ -68,18 +68,6 @@ struct CyberCat
     
     void backward()
     {
-        driver.add(com.backward);
-    }
-    
-    void walk_forward()
-    {
-        //driver.add(com.walk_forward);
-        driver.add(com.forward);
-    }
-    
-    void walk_backward()
-    {
-        //driver.add(com.walk_backward);
         driver.add(com.backward);
     }
     

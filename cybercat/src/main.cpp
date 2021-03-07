@@ -84,12 +84,12 @@ void loop()
     {
       if (PS4.data.analog.stick.ly > 10)
       {
-        cat.walk_forward();
+        cat.forward();
         state.set(STATE_FORWARD);
       }
       else if (PS4.data.analog.stick.ly < -10)
       {
-        cat.walk_backward();
+        cat.backward();
         state.set(STATE_BACKWARD);
       }
       else if (PS4.data.button.up )
@@ -109,7 +109,7 @@ void loop()
         {
           if (PS4.data.analog.stick.ly > 10)
           {
-            cat.walk_forward();
+            cat.forward();
             state.set(STATE_FORWARD);
           }
           else
@@ -125,7 +125,7 @@ void loop()
         {
           if (PS4.data.analog.stick.ly < -10)
           {
-            cat.walk_backward();
+            cat.backward();
             state.set(STATE_BACKWARD);
           }
           else
