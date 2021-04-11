@@ -70,7 +70,6 @@ inline void CommandManger::update_forward(Degree shoulder_init, Degree knee_init
     
     const Degree moveKnee =  round((double) knee_init * moveShoulder * 0.5 /shoulder_init  );
     
-    
     forward[index++] = {FLS, shoulder_init - moveShoulder};
     forward[index++] = {FLK, knee_init + moveKnee - upAngle};
     

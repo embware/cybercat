@@ -26,7 +26,7 @@ struct CyberCat
     CommandManger com;
     Degree moveAngle;
     
-    CyberCat(ServoDriver& driver, Len boneLength = 200) : driver {driver}, boneLength { boneLength} , moveAngle {5}
+    CyberCat(ServoDriver& driver, Len boneLength = 200) : driver {driver}, boneLength { boneLength} , moveAngle {10}
     {
        heightMax = 2 * boneLength - 20;
        heightMin = 2 * boneLength * TrigCache.sinus[driver.config[FLK].min/2];
